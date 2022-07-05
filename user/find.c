@@ -19,32 +19,7 @@ fmtname(char *path)
     return p;
   memmove(buf, p, strlen(p));
   buf[strlen(p)] = '\0';
-  // memset(buf+strlen(p), ' ', DIRSIZ-strlen(p));
   return buf;
-}
-
-char* getFilename(char *path) {
-  static char ret[512];
-  int srclen = strlen(path);
-  int dstlen = 0;
-  int lastIndex = srclen - 1;
-  int firstIndex = 0;
-
-  if (path[srclen-1] == '/') {
-    lastIndex = srclen - 2; 
-  }
-
-  for (firstIndex = lastIndex - 1; firstIndex >= 0; firstIndex--) {
-    if (path[firstIndex] == '/') {
-      break;
-    }
-  }
-
-  dstlen = lastIndex-firstIndex+1;
-  memcpy(ret, path, dstlen);
-  ret[dstlen] = '\0';
-
-  return ret;
 }
 
 void
@@ -74,8 +49,6 @@ find(char *path, char *target)
   case T_FILE:
     // strcmp
     filename = fmtname(path);
-    // printf("check file [%s]\n", filename);
-    // printf("check targ [%s]\n", target);
     if (strcmp(target, filename) == 0) {
       printf("%s\n", path);
       return;
@@ -83,10 +56,7 @@ find(char *path, char *target)
     break;
   // if this path is a directory, iterate all file in this directory recursively
   case T_DIR:
-    // printf("check directory %s\n", path);
-
     if(strlen(path) + 1 + DIRSIZ + 1 > sizeof buf){
-      // printf("check directory path too long\n");
       break;
     }
     strcpy(buf, path);
@@ -98,11 +68,9 @@ find(char *path, char *target)
       memmove(p, de.name, DIRSIZ);
       p[DIRSIZ] = 0;
       if (strcmp(de.name, ".") == 0) {
-        // printf("check directory . not recursive \n");
         continue;
       }
       if (strcmp(de.name, "..") == 0) {
-        // printf("check directory .. not recursive \n");
         continue;
       }  
       find(buf, target);
